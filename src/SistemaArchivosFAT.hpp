@@ -7,19 +7,24 @@
 // Definiciones básicas
 const int TAM_BLOQUE = 8;  // Tamaño de cada bloque
 const int TAM_UNIDAD = 4096;  // Tamaño de la unidad (arreglo de 4096 chars)
-
+const int TAM_TABLA = 1 << TAM_BLOQUE; // tamaño de FAT es 2^8
 // Estructura para representar un archivo en el sistema
 struct Archivo {
   std::string nombre;
   int bloqueInicio;  // Bloque donde comienza el archivo
-  int tamaño;  // Tamaño del archivo en bloques, no se si esto realmente es asi, quiza despues se cambie 
+  //int tamaño;  // Tamaño del archivo en bloques, no se si esto realmente es asi, quiza despues se cambie
+  //inicializar el archivo
+  Archivo() : nombre(""), bloqueInicio(-1) {}
 };
 
+struct Marcos{
+  char marco[TAM_BLOQUE]; // Cada frame tiene 8 bytes
+};
 // Clase SistemaArchivosFAT
 class SistemaArchivosFAT {
 private:
-  char unidad[TAM_UNIDAD];  // Unidad de almacenamiento
-  int tablaBloques[TAM_UNIDAD / TAM_BLOQUE];  // Tabla de bloques de 8 chars cada uno
+  Marcos unidad[TAM_UNIDAD/TAM_BLOQUE]; // Arreglo de frames 
+  int tablaBloques[TAM_TABLA];  // Tabla de bloques de 8 chars cada uno
   std::vector<Archivo> directorio;  // Directorio de archivos
 
 public:
@@ -28,7 +33,7 @@ public:
   // Métodos del sistema de archivos
   void abrir(const std::string& nombreArchivo);
   void cerrar(const std::string& nombreArchivo);
-  void crear(const std::string& nombreArchivo, int tamaño);
+  void crear(const std::string& nombreArchivo, std::vector<char>& datos);
   void leer(const std::string& nombreArchivo);
   void escribir(const std::string& nombreArchivo, const std::string& datos);
   void buscar(const std::string& nombreArchivo);
