@@ -5,29 +5,31 @@
 #include <vector>
 
 // Definiciones básicas
-const int TAM_BLOQUE = 8;  // Tamaño de cada bloque
+const int TAM_BLOQUE = 8;     // Tamaño de cada bloque
 const int TAM_UNIDAD = 4096;  // Tamaño de la unidad (arreglo de 4096 chars)
-const int TAM_TABLA = 1 << TAM_BLOQUE; // tamaño de FAT es 2^8
+const int TAM_TABLA = 1 << TAM_BLOQUE;  // tamaño de FAT es 2^8
+
 // Estructura para representar un archivo en el sistema
 struct Archivo {
   std::string nombre;
   int bloqueInicio;  // Bloque donde comienza el archivo
-  //int tamaño;  // Tamaño del archivo en bloques, no se si esto realmente es asi, quiza despues se cambie
-  //inicializar el archivo
+  // int tamaño;  // Tamaño del archivo en bloques, no se si esto realmente es
+  // asi, quiza despues se cambie inicializar el archivo
   Archivo() : nombre(""), bloqueInicio(-1) {}
 };
 
-struct Marcos{
-  char marco[TAM_BLOQUE]; // Cada frame tiene 8 bytes
+struct Marcos {
+  char marco[TAM_BLOQUE];  // Cada frame tiene 8 bytes
 };
+
 // Clase SistemaArchivosFAT
 class SistemaArchivosFAT {
-private:
-  Marcos unidad[TAM_UNIDAD/TAM_BLOQUE]; // Arreglo de frames 
-  int tablaBloques[TAM_TABLA];  // Tabla de bloques de 8 chars cada uno
+ private:
+  Marcos unidad[TAM_UNIDAD / TAM_BLOQUE];  // Arreglo de frames
+  int tablaBloques[TAM_TABLA];      // Tabla de bloques de 8 chars cada uno
   std::vector<Archivo> directorio;  // Directorio de archivos
 
-public:
+ public:
   SistemaArchivosFAT();
 
   // Métodos del sistema de archivos
@@ -39,13 +41,17 @@ public:
   void buscar(const std::string& nombreArchivo);
   void borrar(const std::string& nombreArchivo);
   void adjuntar(const std::string& nombreArchivo, const std::string& datos);
-  void renombrar(const std::string& nombreArchivo, const std::string& nuevoNombre);
+  void renombrar(const std::string& nombreArchivo,
+                 const std::string& nuevoNombre);
   void listar();
 
-private:
-  int encontrarArchivo(const std::string& nombreArchivo);  // Método auxiliar para buscar archivos
-  int asignarBloques(int tamaño);  // Método auxiliar para asignar bloques
-  void liberarBloques(int bloqueInicio);  // Método auxiliar para liberar bloques
+ private:
+  // Método auxiliar para buscar archivos
+  int encontrarArchivo(const std::string& nombreArchivo);
+  // Método auxiliar para asignar bloques
+  int asignarBloques(int tamaño);
+  // Método auxiliar para liberar bloques
+  void liberarBloques(int bloqueInicio);
 };
 
-#endif // SISTEMA_ARCHIVOS_FAT_HPP
+#endif  // SISTEMA_ARCHIVOS_FAT_HPP
