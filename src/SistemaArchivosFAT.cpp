@@ -82,7 +82,36 @@ void SistemaArchivosFAT::buscar(const std::string& nombreArchivo) {
 }
 
 void SistemaArchivosFAT::borrar(const std::string& nombreArchivo) {
-  // Implementar
+  int siguienteBloque = 0;
+  int bloqueInicio = 0;
+
+  for (size_t i = 0; i < directorio.size(); i++) {
+    // Si existe el archivo en el directorio
+    if (directorio[i].nombre == nombreArchivo) {
+      bloqueInicio = directorio[i].bloqueInicio;
+
+      // Liberar los bloques
+      while (bloqueInicio != -1) {
+        // Se incia el borrado en elprimer bloque de la tabla
+        siguienteBloque = tablaBloques[bloqueInicio];
+        // Se le asigna -1
+        tablaBloques[bloqueInicio] = -1;
+        // Se elimina siguiente bloque
+        bloqueInicio = siguienteBloque;
+      }
+
+      // Limpiar los valores del directorio
+      directorio[i].nombre.clear();
+      directorio[i].bloqueInicio = -1;
+
+      std::cout << "Archivo '" << nombreArchivo << "' borrado exitosamente."
+                << std::endl;
+      return;
+    }
+  }
+
+  std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
+            << std::endl;
 }
 
 void SistemaArchivosFAT::adjuntar(const std::string& nombreArchivo,
