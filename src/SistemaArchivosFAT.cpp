@@ -123,22 +123,29 @@ void SistemaArchivosFAT::adjuntar(const std::string& nombreArchivo,
 
 void SistemaArchivosFAT::renombrar(const std::string& nombreArchivo,
                                    const std::string& nuevoNombre) {
-  bool file_exist = false;
-  for (size_t i = 0; i < directorio.size(); i++) {
-    if (directorio[i].nombre == nombreArchivo) {
-      directorio[i].nombre = nuevoNombre;
-      file_exist = true;
-    }
-  }
+  // Buscar el archivo original
+  int posicionOriginal = encontrarArchivo(nombreArchivo);
 
-  if (file_exist) {
-    std::cout << "Archivo '" << nombreArchivo
-              << "ha sido renombrado existosamente a: " << nuevoNombre
-              << std::endl;
-  } else {
+  // Si no se encuentra el archivo original, mostrar error
+  if (posicionOriginal == -1) {
     std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
               << std::endl;
+    return;
   }
+
+  // Verificar si el nuevo nombre ya existe
+  int posicionNuevoNombre = encontrarArchivo(nuevoNombre);
+  if (posicionNuevoNombre != -1) {
+    std::cout << "Error: El archivo '" << nuevoNombre << "' ya existe."
+              << std::endl;
+    return;
+  }
+
+  // Renombrar el archivo
+  directorio[posicionOriginal].nombre = nuevoNombre;
+  std::cout << "Archivo '" << nombreArchivo
+            << "' ha sido renombrado exitosamente a: " << nuevoNombre
+            << std::endl;
 }
 
 void SistemaArchivosFAT::listar() {
@@ -154,7 +161,18 @@ void SistemaArchivosFAT::listar() {
   }
 }
 
-int SistemaArchivosFAT::encontrarArchivo(const std::string& nombreArchivo) {}
+int SistemaArchivosFAT::encontrarArchivo(const std::string& nombreArchivo) {
+  for (size_t i = 0; i < directorio.size(); i++) {
+    if (directorio[i].nombre == nombreArchivo) {
+      std::cout << "Archivo '" << nombreArchivo << "' encontrado." << std::endl;
+      return i;  // Retorna la posición en el directorio si se encuentra
+    }
+  }
+
+  std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
+            << std::endl;
+  return -1;  // Retorna -1 si no se encuentra el archivo
+}
 
 int SistemaArchivosFAT::asignarBloques(int tamaño) {
   // Implementar
