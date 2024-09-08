@@ -46,24 +46,26 @@ void SistemaArchivosFAT::crear(const std::string& nombreArchivo,
         // Si se encuentra un marco vacío en la unidad
         if (unidad[j].marco[0] == '\0') {
           if (directorio[i].bloqueInicio == -1) {
-            directorio[i].bloqueInicio =
-                j;  // Asigna el primer bloque al inicio del archivo
+            // Asigna el primer bloque al inicio del archivo
+            directorio[i].bloqueInicio = j;
           } else {
-            tablaBloques[posAnterior] =
-                j;  // Actualiza FAT con la posición anterior
+            // Actualiza FAT con la posición anterior
+            tablaBloques[posAnterior] = j;
           }
           posAnterior = j;
 
           // Guardar los datos en el frame
           for (int k = 0; k < TAM_BLOQUE && !datos.empty(); ++k) {
-            unidad[j].marco[k] =
-                datos[0];  // Asigna el char en el espacio vacío del frame
-            datos.erase(datos.begin());  // Borra el primer elemento del vector
+            // Asigna el char en el espacio vacío del frame
+            unidad[j].marco[k] = datos[0];
+            // Borra el primer elemento del vector
+            datos.erase(datos.begin());
           }
         }
       }
-      break;  // Sale del bucle después de encontrar un espacio vacío y asignar
-              // los datos
+      // Sale del bucle después de encontrar un espacio vacío y asignar los
+      // datos
+      break;
     }
   }
 }
@@ -92,7 +94,7 @@ void SistemaArchivosFAT::borrar(const std::string& nombreArchivo) {
 
       // Liberar los bloques
       while (bloqueInicio != -1) {
-        // Se incia el borrado en elprimer bloque de la tabla
+        // Se incia el borrado en el primer bloque de la tabla
         siguienteBloque = tablaBloques[bloqueInicio];
         // Se le asigna -1
         tablaBloques[bloqueInicio] = -1;
@@ -121,7 +123,22 @@ void SistemaArchivosFAT::adjuntar(const std::string& nombreArchivo,
 
 void SistemaArchivosFAT::renombrar(const std::string& nombreArchivo,
                                    const std::string& nuevoNombre) {
-  // Implementar
+  bool file_exist = false;
+  for (size_t i = 0; i < directorio.size(); i++) {
+    if (directorio[i].nombre == nombreArchivo) {
+      directorio[i].nombre = nuevoNombre;
+      file_exist = true;
+    }
+  }
+
+  if (file_exist) {
+    std::cout << "Archivo '" << nombreArchivo
+              << "ha sido renombrado existosamente a: " << nuevoNombre
+              << std::endl;
+  } else {
+    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
+              << std::endl;
+  }
 }
 
 void SistemaArchivosFAT::listar() {
@@ -137,9 +154,7 @@ void SistemaArchivosFAT::listar() {
   }
 }
 
-int SistemaArchivosFAT::encontrarArchivo(const std::string& nombreArchivo) {
-  // Implementar
-}
+int SistemaArchivosFAT::encontrarArchivo(const std::string& nombreArchivo) {}
 
 int SistemaArchivosFAT::asignarBloques(int tamaño) {
   // Implementar
