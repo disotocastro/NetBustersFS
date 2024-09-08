@@ -13,9 +13,10 @@ const int TAM_TABLA = 1 << TAM_BLOQUE;  // tamaño de FAT es 2^8
 struct Archivo {
   std::string nombre;
   int bloqueInicio;  // Bloque donde comienza el archivo
+  int bloqueFin;
   // int tamaño;  // Tamaño del archivo en bloques, no se si esto realmente es
   // asi, quiza despues se cambie inicializar el archivo
-  Archivo() : nombre(""), bloqueInicio(-1) {}
+  Archivo() : nombre(""), bloqueInicio(-1), bloqueFin(-1) {}
 };
 
 struct Marcos {
@@ -37,10 +38,9 @@ class SistemaArchivosFAT {
   void cerrar(const std::string& nombreArchivo);
   void crear(const std::string& nombreArchivo, std::vector<char>& datos);
   void leer(const std::string& nombreArchivo);
-  void escribir(const std::string& nombreArchivo, const std::string& datos);
   void buscar(const std::string& nombreArchivo);
   void borrar(const std::string& nombreArchivo);
-  void adjuntar(const std::string& nombreArchivo, const std::string& datos);
+  void adjuntar(const std::string& nombreArchivo, std::vector<char>& datos);
   void renombrar(const std::string& nombreArchivo,
                  const std::string& nuevoNombre);
   void listar();
@@ -52,6 +52,8 @@ class SistemaArchivosFAT {
   int asignarBloques(int tamaño);
   // Método auxiliar para liberar bloques
   void liberarBloques(int bloqueInicio);
+  // Método auxiliar para escribir datos
+  void escribir(size_t marco, std::vector<char>& datos);
 };
 
 #endif  // SISTEMA_ARCHIVOS_FAT_HPP

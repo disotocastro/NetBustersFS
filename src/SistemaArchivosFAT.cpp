@@ -55,14 +55,11 @@ void SistemaArchivosFAT::crear(const std::string& nombreArchivo,
           posAnterior = j;
 
           // Guardar los datos en el frame
-          for (int k = 0; k < TAM_BLOQUE && !datos.empty(); ++k) {
-            // Asigna el char en el espacio vacío del frame
-            unidad[j].marco[k] = datos[0];
-            // Borra el primer elemento del vector
-            datos.erase(datos.begin());
-          }
+          escribir(j, datos);
         }
       }
+      // Asigna el bloque final al final del archivo
+      directorio[i].bloqueFin = posAnterior+1;
       // Sale del bucle después de encontrar un espacio vacío y asignar los
       // datos
       break;
@@ -71,12 +68,33 @@ void SistemaArchivosFAT::crear(const std::string& nombreArchivo,
 }
 
 void SistemaArchivosFAT::leer(const std::string& nombreArchivo) {
+  int posicionOriginal = encontrarArchivo(nombreArchivo);
+  int marco = directorio[posicionOriginal].bloqueInicio;
+  int bloqueFinal = directorio[posicionOriginal].bloqueFin;
+
+  if (posicionOriginal != -1) {
+    std::cout << "Leyendo contenido de " << nombreArchivo << ": " << std::endl;
+    for (marco; marco <= bloqueFinal; marco ++) {
+      for (int i = 0; i < TAM_BLOQUE; i++) {
+        std::cout << unidad[marco].marco[i];
+      }
+    }
+
+    std::cout << std::endl;
+  }
   // Implementar
 }
 
-void SistemaArchivosFAT::escribir(const std::string& nombreArchivo,
-                                  const std::string& datos) {
-  // Implementar
+void SistemaArchivosFAT::escribir(size_t marco, std::vector<char>& datos) {
+  for (int i = 0; i < TAM_BLOQUE && !datos.empty(); ++i) {
+    // Revisa que sea un marco vacío
+    if (unidad[marco].marco[i] == '\0') {
+      // Asigna el char en el espacio vacío del frame
+      unidad[marco].marco[i] = datos[0];
+      // Borra el primer elemento del vector
+      datos.erase(datos.begin());
+    }
+  }
 }
 
 void SistemaArchivosFAT::buscar(const std::string& nombreArchivo) {
@@ -117,8 +135,26 @@ void SistemaArchivosFAT::borrar(const std::string& nombreArchivo) {
 }
 
 void SistemaArchivosFAT::adjuntar(const std::string& nombreArchivo,
-                                  const std::string& datos) {
-  // Implementar
+                                  std::vector<char>& datos) {
+  // Buscar el archivo
+  int posicionOriginal = encontrarArchivo(nombreArchivo);
+  int marco = -1;
+ 
+  // Ingresar datos a la unidad
+  if (posicionOriginal != -1) {
+    int posicionActual = -1;
+
+    marco = directorio[posicionOriginal].bloqueFin;
+    for (marco; marco < TAM_UNIDAD / TAM_BLOQUE && !datos.empty(); ++marco) {
+      posicionActual = marco;
+
+      //Actualizar tabla de bloques
+      tablaBloques[posicionActual-1] = marco;
+
+      escribir(marco, datos);
+    }
+    directorio[posicionOriginal].bloqueFin = posicionActual;
+  };
 }
 
 void SistemaArchivosFAT::renombrar(const std::string& nombreArchivo,
