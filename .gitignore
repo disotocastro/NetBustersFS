@@ -31,3 +31,8 @@
 *.out
 *.app
 *.vscode
+
+# Exclude bin and build directories
+bin/
+build/
+

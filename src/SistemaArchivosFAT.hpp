@@ -16,7 +16,8 @@ struct Archivo {
   int bloqueFin;
   // int tamaño;  // Tamaño del archivo en bloques, no se si esto realmente es
   // asi, quiza despues se cambie inicializar el archivo
-  Archivo() : nombre(""), bloqueInicio(-1), bloqueFin(-1) {}
+  bool abierto;  // Nueva bandera para indicar si el archivo está abierto
+  Archivo() : nombre(""), bloqueInicio(-1), bloqueFin(-1), abierto(false) {}
 };
 
 struct Marcos {

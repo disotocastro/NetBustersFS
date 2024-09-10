@@ -22,12 +22,36 @@ SistemaArchivosFAT::SistemaArchivosFAT() {
   directorio.resize(5);  // Se crea un directorio con tamaño fijo de 5
 }
 
+// verificar despues si la funcionalidad se deja o no, podria ser esta la idea de estos metodos
 void SistemaArchivosFAT::abrir(const std::string& nombreArchivo) {
-  // Implementar
+  int posicion = encontrarArchivo(nombreArchivo);
+
+  if (posicion != -1) {
+    if (directorio[posicion].abierto) {
+      std::cout << "El archivo '" << nombreArchivo << "' ya está abierto." << std::endl;
+    } else {
+      directorio[posicion].abierto = true;  // Marcar el archivo como abierto
+      std::cout << "El archivo '" << nombreArchivo << "' ha sido abierto." << std::endl;
+    }
+  } else {
+    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado." << std::endl;
+  }
 }
 
+// verificar despues si la funcionalidad se deja o no, podria ser esta la idea de estos metodos
 void SistemaArchivosFAT::cerrar(const std::string& nombreArchivo) {
-  // Implementar
+  int posicion = encontrarArchivo(nombreArchivo);
+
+  if (posicion != -1) {
+    if (!directorio[posicion].abierto) {
+      std::cout << "El archivo '" << nombreArchivo << "' ya está cerrado." << std::endl;
+    } else {
+      directorio[posicion].abierto = false;  // Marcar el archivo como cerrado
+      std::cout << "El archivo '" << nombreArchivo << "' ha sido cerrado." << std::endl;
+    }
+  } else {
+    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado." << std::endl;
+  }
 }
 
 void SistemaArchivosFAT::crear(const std::string& nombreArchivo,
@@ -40,6 +64,7 @@ void SistemaArchivosFAT::crear(const std::string& nombreArchivo,
     if (directorio[i].nombre.empty()) {
       directorio[i].nombre = nombreArchivo;  // Asigna nombre en el directorio
       directorio[i].bloqueInicio = -1;       // Inicializa el bloque de inicio
+      directorio[i].abierto = false;  // Inicializa el archivo como cerrado
 
       // Ingresar datos a la unidad
       for (int j = 0; j < TAM_UNIDAD / TAM_BLOQUE && !datos.empty(); ++j) {
@@ -69,20 +94,28 @@ void SistemaArchivosFAT::crear(const std::string& nombreArchivo,
 
 void SistemaArchivosFAT::leer(const std::string& nombreArchivo) {
   int posicionOriginal = encontrarArchivo(nombreArchivo);
-  int marco = directorio[posicionOriginal].bloqueInicio;
-  int bloqueFinal = directorio[posicionOriginal].bloqueFin;
-
+  
   if (posicionOriginal != -1) {
+    // Verificar si el archivo está abierto antes de leerlo
+    if (!directorio[posicionOriginal].abierto) {
+      std::cout << "Error: El archivo '" << nombreArchivo << "' no está abierto." << std::endl;
+      return;
+    }
+
+    int marco = directorio[posicionOriginal].bloqueInicio;
+    int bloqueFinal = directorio[posicionOriginal].bloqueFin;
+
     std::cout << "Leyendo contenido de " << nombreArchivo << ": " << std::endl;
-    for (marco; marco <= bloqueFinal; marco ++) {
+    for (marco; marco <= bloqueFinal; marco++) {
       for (int i = 0; i < TAM_BLOQUE; i++) {
-        std::cout << unidad[marco].marco[i];
+          std::cout << unidad[marco].marco[i];
       }
     }
 
     std::cout << std::endl;
+  } else {
+    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado." << std::endl;
   }
-  // Implementar
 }
 
 void SistemaArchivosFAT::escribir(size_t marco, std::vector<char>& datos) {
@@ -97,8 +130,19 @@ void SistemaArchivosFAT::escribir(size_t marco, std::vector<char>& datos) {
   }
 }
 
+// verificar despues si la funcionalidad se deja o no, podria ser esta la idea de estos metodos
 void SistemaArchivosFAT::buscar(const std::string& nombreArchivo) {
-  // Implementar
+// Es una logica mas informativa de donde esta el archivo y su bloque y demas
+  int posicion = encontrarArchivo(nombreArchivo);
+
+  if (posicion != -1) {
+    std::cout << "Archivo encontrado: " << directorio[posicion].nombre << std::endl;
+    std::cout << "Bloque de inicio: " << directorio[posicion].bloqueInicio << std::endl;
+    std::cout << "Bloque final: " << directorio[posicion].bloqueFin << std::endl;
+    std::cout << "Estado: " << (directorio[posicion].abierto ? "Abierto" : "Cerrado") << std::endl;
+  } else {
+    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado." << std::endl;
+  }
 }
 
 void SistemaArchivosFAT::borrar(const std::string& nombreArchivo) {
