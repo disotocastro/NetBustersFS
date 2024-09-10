@@ -19,7 +19,7 @@ SistemaArchivosFAT::SistemaArchivosFAT() {
     }
   }
 
-  directorio.resize(5);  // Se crea un directorio con tamaño fijo de 5
+  directorio.resize(10);  // Se crea un directorio con tamaño fijo de 5
 }
 
 // verificar despues si la funcionalidad se deja o no, podria ser esta la idea de estos metodos
@@ -234,10 +234,13 @@ void SistemaArchivosFAT::listar() {
       std::cout << "Contenido de la dirección: " << i << " | "
                 << "Nombre del archivo: " << directorio[i].nombre
                 << " | Bloque de inicio: " << directorio[i].bloqueInicio
+                // << " | Bloque final: " << directorio[i].bloqueFin
+                << " | Estado: " << (directorio[i].abierto ? " Abierto" : " Cerrado")
                 << std::endl;
-    } else {
-      std::cout << "Directorio vacío en la posición: " << i << std::endl;
     }
+    //  else {
+    //   std::cout << "Directorio vacío en la posición: " << i << std::endl;
+    // }
   }
 }
 

@@ -12,12 +12,15 @@ const int TAM_TABLA = 1 << TAM_BLOQUE;  // tamaño de FAT es 2^8
 // Estructura para representar un archivo en el sistema
 struct Archivo {
   std::string nombre;
-  int bloqueInicio;  // Bloque donde comienza el archivo
+  int bloqueInicio;  // Bloque donde comienza el archivo:vector<char> datos1 = {'H', 'o', 'l', 'a', 'M', 'u', 'n', 'd', 'o'};
   int bloqueFin;
   // int tamaño;  // Tamaño del archivo en bloques, no se si esto realmente es
   // asi, quiza despues se cambie inicializar el archivo
   bool abierto;  // Nueva bandera para indicar si el archivo está abierto
-  Archivo() : nombre(""), bloqueInicio(-1), bloqueFin(-1), abierto(false) {}
+  std::string permisos;
+  std::string usuario;
+  int proceso;
+  Archivo() : nombre(""), bloqueInicio(-1), bloqueFin(-1), abierto(false), permisos ("r--"), usuario(""), proceso(-1){}
 };
 
 struct Marcos {
@@ -45,6 +48,7 @@ class SistemaArchivosFAT {
   void renombrar(const std::string& nombreArchivo,
                  const std::string& nuevoNombre);
   void listar();
+
 
  private:
   // Método auxiliar para buscar archivos
