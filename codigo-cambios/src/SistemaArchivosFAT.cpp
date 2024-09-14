@@ -151,24 +151,26 @@ void SistemaArchivosFAT::escribir(const std::string& nombreArchivo, std::vector<
    // Ingresar datos a la unidad
   for (int j = 0; j < TAM_UNIDAD / TAM_BLOQUE && !datos.empty(); ++j) {
     // Si se encuentra un marco vacío en la unidad
-    if (unidad[j].marco[0] == '\0') {
-      if (directorio[posicion].bloqueInicio == -1) {
-        // Asigna el primer bloque al inicio del archivo
-        directorio[posicion].bloqueInicio = j;
-      } else {
-        // Actualiza FAT con la posición anterior
-        tablaBloques[posAnterior] = j;
-      }
-      posAnterior = j;
+    for(int k = 0; k < TAM_BLOQUE && !datos.empty(); k++){
+       if (unidad[j].marco[k] == '\0') {
+        if (directorio[posicion].bloqueInicio == -1) {
+          // Asigna el primer bloque al inicio del archivo
+          directorio[posicion].bloqueInicio = j;
+        } else {
+          // Actualiza FAT con la posición anterior
+          tablaBloques[posAnterior] = j;
+        }
+        posAnterior = j;
 
-      // Guardar los datos en el frame
-        for (int i = 0; i < TAM_BLOQUE && !datos.empty(); ++i) {
-        // Revisa que sea un marco vacío
-        if (unidad[j].marco[i] == '\0') {
-          // Asigna el char en el espacio vacío del frame
-          unidad[j].marco[i] = datos[0];
-          // Borra el primer elemento del vector
-          datos.erase(datos.begin());
+        // Guardar los datos en el frame
+        for (int i = k; i < TAM_BLOQUE && !datos.empty(); ++i) {
+          // Revisa que sea un marco vacío
+          if (unidad[j].marco[i] == '\0') {
+            // Asigna el char en el espacio vacío del frame
+            unidad[j].marco[i] = datos[0];
+            // Borra el primer elemento del vector
+            datos.erase(datos.begin());
+          }
         }
       }
     }
@@ -182,7 +184,7 @@ void SistemaArchivosFAT::imprimir(){
   }
 
   for(int i = 0 ; i<10; i++){
-    for(int j = 0 ; j<20; j++){
+    for(int j = 0 ; j<8; j++){
     std::cout<<unidad[i].marco[j]<<" ";
   }
   }
