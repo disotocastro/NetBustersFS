@@ -65,9 +65,9 @@ int main() {
   // // Probar el método buscar para verificar si está abierto
   // std::cout << "\n--- Probando buscar (debería estar abierto) ---\n";
 
-  // // Leer el contenido del archivo (debería permitir lectura)
-  // std::cout << "\n--- Leyendo file1.txt ---\n";
-  // fs.leer("file1.txt");
+  // Leer el contenido del archivo (debería permitir lectura)
+  std::cout << "\n--- Leyendo file1.txt ---\n";
+  fs.leer("file1.txt");
 
   // // Probar cerrar el archivo
   // std::cout << "\n--- Probando cerrar ---\n";

@@ -37,7 +37,7 @@ void SistemaArchivosFAT::abrir(const std::string& nombreArchivo) {
     std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado." << std::endl;
   }
 }
-
+// todo return
 // verificar despues si la funcionalidad se deja o no, podria ser esta la idea de estos metodos
 void SistemaArchivosFAT::cerrar(const std::string& nombreArchivo) {
   int posicion = encontrarArchivo(nombreArchivo);
