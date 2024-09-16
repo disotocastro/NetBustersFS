@@ -45,10 +45,26 @@ int main() {
   fs.adjuntar("file1.txt", datos2);
   fs.abrir("file1.txt", 1);
   fs.leer("file1.txt");
+ 
+  
+  std::vector<char> datos3 = {'H', 'o', 'l', 'a', 'M', 'u', 'n', 'd', 'o'};
+  fs.crear("file2.txt");
+  fs.escribir("file2.txt", datos3);
+  std::vector<char> datos4 = {'T', 'o'};
+  fs.adjuntar("file2.txt", datos4);
+  fs.abrir("file2.txt", 1);
+  fs.leer("file2.txt");
+  
+   
+  std::vector<char> datos5 = {'H', 'o', 'l', 'n', 'd', 'o'};
+  fs.crear("file3.txt");
+  fs.escribir("file3.txt", datos5);
+  fs.abrir("file3.txt", 1);
+  fs.leer("file3.txt");
+ 
+
   fs.listar();
   fs.imprimir();
-
-
   // std::vector<char> datos3= {'H', 'o', 'l', 'a', 'M', 'u', '1', '1', '0'};
   // fs.crear("file2.txt");
   // fs.escribir("file2.txt", datos2);

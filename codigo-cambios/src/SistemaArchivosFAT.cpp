@@ -148,46 +148,68 @@ void SistemaArchivosFAT::escribir(const std::string& nombreArchivo, std::vector<
   int posicion = encontrarArchivo(nombreArchivo);
   int posAnterior =
     -1;  // Iniciar con -1 para indicar que no hay posición anterior
+   int marco = 0;
    // Ingresar datos a la unidad
   for (int j = 0; j < TAM_UNIDAD / TAM_BLOQUE && !datos.empty(); ++j) {
     // Si se encuentra un marco vacío en la unidad
     for(int k = 0; k < TAM_BLOQUE && !datos.empty(); k++){
        if (unidad[j].marco[k] == '\0') {
+        
         if (directorio[posicion].bloqueInicio == -1) {
           // Asigna el primer bloque al inicio del archivo
           directorio[posicion].bloqueInicio = j;
+          marco = j;
+          posAnterior = j;
         } else {
-          // Actualiza FAT con la posición anterior
-          tablaBloques[posAnterior] = j;
+          // que siga escribiendo en la misma unidad si hay espacio
+          if(directorio[posicion].bloqueFin != -1 ) {
+            marco = directorio[posicion].bloqueFin;
+            tablaBloques[posAnterior] = directorio[posicion].bloqueFin;
+            posAnterior = directorio[posicion].bloqueFin;
+          } else {
+            // Actualiza FAT con la posición anterior
+            tablaBloques[posAnterior] = j;
+            marco = j;
+            posAnterior = j;
+          }
         }
-        posAnterior = j;
-
+        
+        std::cout<<"sale "<< std::endl;
         // Guardar los datos en el frame
         for (int i = k; i < TAM_BLOQUE && !datos.empty(); ++i) {
           // Revisa que sea un marco vacío
-          if (unidad[j].marco[i] == '\0') {
+          if (unidad[marco].marco[i] == '\0') {
+            std::cout<<"entra "<< std::endl;
             // Asigna el char en el espacio vacío del frame
-            unidad[j].marco[i] = datos[0];
+            unidad[marco].marco[i] = datos[0];
             // Borra el primer elemento del vector
             datos.erase(datos.begin());
           }
         }
       }
     }
+    
   }
-  directorio[posicion].bloqueFin = posAnterior+1;
+  directorio[posicion].bloqueFin = posAnterior;
+  
 }
 
 void SistemaArchivosFAT::imprimir(){
-  for(int i = 0 ; i<10; i++){
-    std::cout<<tablaBloques[i]<<std::endl;
-  }
+    std::cout << "Tabla de asignación de bloques (FAT):" << std::endl;
+    for (int i = 0; i < 10; ++i) {
+        std::cout << "Bloque " << i << ": " << tablaBloques[i] << std::endl;
+    }
 
-  for(int i = 0 ; i<10; i++){
-    for(int j = 0 ; j<8; j++){
-    std::cout<<unidad[i].marco[j]<<" ";
-  }
-  }
+    std::cout << "\nContenido de los bloques:" << std::endl;
+    for (int i = 0; i < 10; ++i) {
+        std::cout << "Bloque " << i << ": ";
+        for (int j = 0; j < 8; ++j) {
+            if (unidad[i].marco[j] != '\0') {
+                std::cout << unidad[i].marco[j] << " ";
+            }
+        }
+        std::cout << std::endl;
+    }
 }
 
 // verificar despues si la funcionalidad se deja o no, podria ser esta la idea de estos metodos
@@ -255,7 +277,7 @@ void SistemaArchivosFAT::adjuntar(const std::string& nombreArchivo,
       //Actualizar tabla de bloques
       tablaBloques[posicionActual-1] = marco;
 
-      escribirAdjuntando(marco, datos);
+      escribir(nombreArchivo, datos);
     }
     directorio[posicionOriginal].bloqueFin = posicionActual;
   };
