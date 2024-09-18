@@ -21,52 +21,55 @@ SistemaArchivosFAT::SistemaArchivosFAT() {
     }
   }
 
- // directorio.resize(10);  // Se crea un directorio con tamaño fijo de 5
+  // directorio.resize(10);  // Se crea un directorio con tamaño fijo de 5
 }
 
-// verificar despues si la funcionalidad se deja o no, podria ser esta la idea de estos metodos
 void SistemaArchivosFAT::abrir(const std::string& nombreArchivo, bool verbose) {
   int posicion = encontrarArchivo(nombreArchivo);
-  if (verbose){
-     if (posicion != -1) {
+  if (verbose) {
+    if (posicion != -1) {
       if (directorio[posicion].abierto) {
-        std::cout << "El archivo '" << nombreArchivo << "' ya está abierto." << std::endl;
+        std::cout << "El archivo '" << nombreArchivo << "' ya está abierto."
+                  << std::endl;
       } else {
         directorio[posicion].abierto = true;  // Marcar el archivo como abierto
-        std::cout << "El archivo '" << nombreArchivo << "' ha sido abierto." << std::endl;
+        std::cout << "El archivo '" << nombreArchivo << "' ha sido abierto."
+                  << std::endl;
       }
     } else {
-      std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado." << std::endl;
+      std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
+                << std::endl;
     }
-  
-  } else{
-    if(posicion != -1) {
-      if (directorio[posicion].abierto == false){
-          directorio[posicion].abierto = true;  // Marcar el archivo como abierto
+
+  } else {
+    if (posicion != -1) {
+      if (directorio[posicion].abierto == false) {
+        directorio[posicion].abierto = true;  // Marcar el archivo como abierto
       }
     }
   }
 }
 
-// verificar despues si la funcionalidad se deja o no, podria ser esta la idea de estos metodos
 void SistemaArchivosFAT::cerrar(const std::string& nombreArchivo) {
   int posicion = encontrarArchivo(nombreArchivo);
 
   if (posicion != -1) {
     if (!directorio[posicion].abierto) {
-      std::cout << "El archivo '" << nombreArchivo << "' ya está cerrado." << std::endl;
+      std::cout << "El archivo '" << nombreArchivo << "' ya está cerrado."
+                << std::endl;
     } else {
       directorio[posicion].abierto = false;  // Marcar el archivo como cerrado
-      std::cout << "El archivo '" << nombreArchivo << "' ha sido cerrado." << std::endl;
+      std::cout << "El archivo '" << nombreArchivo << "' ha sido cerrado."
+                << std::endl;
     }
   } else {
-    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado." << std::endl;
+    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
+              << std::endl;
   }
 }
 
 void SistemaArchivosFAT::crear(const std::string& nombreArchivo) {
-
-  if (cantidadDirectorios == 0){
+  if (cantidadDirectorios == 0) {
     directorio[0] = Archivo();
     directorio[0].nombre = nombreArchivo;
     cantidadDirectorios++;
@@ -75,55 +78,16 @@ void SistemaArchivosFAT::crear(const std::string& nombreArchivo) {
     directorio[cantidadDirectorios].nombre = nombreArchivo;
     cantidadDirectorios++;
   }
-
-}
-
-void SistemaArchivosFAT::crearConArchivos(const std::string& nombreArchivo,
-                               std::vector<char>& datos) {
-  // int posAnterior =
-  //     -1;  // Iniciar con -1 para indicar que no hay posición anterior
-
-  // for (size_t i = 0; i < directorio.size(); ++i) {
-  //   // Busca espacio vacío en el directorio
-  //   if (directorio[i].nombre.empty()) {
-  //     directorio[i].nombre = nombreArchivo;  // Asigna nombre en el directorio
-  //     directorio[i].bloqueInicio = -1;       // Inicializa el bloque de inicio
-  //     directorio[i].abierto = false;  // Inicializa el archivo como cerrado
-
-  //     // Ingresar datos a la unidad
-  //     for (int j = 0; j < TAM_UNIDAD / TAM_BLOQUE && !datos.empty(); ++j) {
-  //       // Si se encuentra un marco vacío en la unidad
-  //       if (unidad[j].marco[0] == '\0') {
-  //         if (directorio[i].bloqueInicio == -1) {
-  //           // Asigna el primer bloque al inicio del archivo
-  //           directorio[i].bloqueInicio = j;
-  //         } else {
-  //           // Actualiza FAT con la posición anterior
-  //           tablaBloques[posAnterior] = j;
-  //         }
-  //         posAnterior = j;
-
-  //         // Guardar los datos en el frame
-  //         escribir(j, datos);
-  //       }
-  //     }
-  //     // Asigna el bloque final al final del archivo
-  //     directorio[i].bloqueFin = posAnterior+1;
-  //     // Sale del bucle después de encontrar un espacio vacío y asignar los
-  //     // datos
-  //     break; 
-  //   }
-  // }
-
 }
 
 void SistemaArchivosFAT::leer(const std::string& nombreArchivo) {
   int posicionOriginal = encontrarArchivo(nombreArchivo);
-  
+
   if (posicionOriginal != -1) {
     // Verificar si el archivo está abierto antes de leerlo
     if (!directorio[posicionOriginal].abierto) {
-      std::cout << "Error: El archivo '" << nombreArchivo << "' no está abierto." << std::endl;
+      std::cout << "Error: El archivo '" << nombreArchivo
+                << "' no está abierto." << std::endl;
       return;
     }
 
@@ -133,97 +97,135 @@ void SistemaArchivosFAT::leer(const std::string& nombreArchivo) {
     std::cout << "Leyendo contenido de " << nombreArchivo << ": " << std::endl;
     for (marco; marco <= bloqueFinal; marco++) {
       for (int i = 0; i < TAM_BLOQUE; i++) {
-          std::cout << unidad[marco].marco[i];
+        std::cout << unidad[marco].marco[i];
       }
     }
 
     std::cout << std::endl;
   } else {
-    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado." << std::endl;
+    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
+              << std::endl;
   }
 }
 
-void SistemaArchivosFAT::escribir(const std::string& nombreArchivo, std::vector<char>& datos) {
-  
+void SistemaArchivosFAT::escribirA(const std::string& nombreArchivo,
+                                   std::vector<char>& datos) {
   int posicion = encontrarArchivo(nombreArchivo);
+  if (posicion == -1) return;  // Si no se encuentra el archivo, salir
+  int dataSize = datos.size();
   int posAnterior =
-    -1;  // Iniciar con -1 para indicar que no hay posición anterior
-   int marco = 0;
-   // Ingresar datos a la unidad
+      -1;  // Iniciar con -1 para indicar que no hay posición anterior
+  int marco = 0;
+
+  for (int j = 0; j < TAM_UNIDAD / TAM_BLOQUE && !datos.empty(); ++j) {
+    if (directorio[posicion].cursor != 0 && directorio[posicion].cursor > 8) {
+      // comente esto pq esta incompleto
+      // for (int k = 0; k < 8; k++)
+      // if(unidad[directorio[posicion].cursor / 8].marco[0] == '\0') {
+
+      // }
+    }
+  }
+  // Ingresar datos a la unidad
   for (int j = 0; j < TAM_UNIDAD / TAM_BLOQUE && !datos.empty(); ++j) {
     // Si se encuentra un marco vacío en la unidad
-    for(int k = 0; k < TAM_BLOQUE && !datos.empty(); k++){
-       if (unidad[j].marco[k] == '\0') {
-        
-        if (directorio[posicion].bloqueInicio == -1) {
-          // Asigna el primer bloque al inicio del archivo
-          directorio[posicion].bloqueInicio = j;
-          marco = j;
-          posAnterior = j;
-        } else {
-          // que siga escribiendo en la misma unidad si hay espacio
-          if(directorio[posicion].bloqueFin != -1 ) {
-            marco = directorio[posicion].bloqueFin;
-            tablaBloques[posAnterior] = directorio[posicion].bloqueFin;
-            posAnterior = directorio[posicion].bloqueFin;
-          } else {
-            // Actualiza FAT con la posición anterior
-            tablaBloques[posAnterior] = j;
-            marco = j;
-            posAnterior = j;
-          }
-        }
-        
-        std::cout<<"sale "<< std::endl;
-        // Guardar los datos en el frame
-        for (int i = k; i < TAM_BLOQUE && !datos.empty(); ++i) {
-          // Revisa que sea un marco vacío
-          if (unidad[marco].marco[i] == '\0') {
-            std::cout<<"entra "<< std::endl;
-            // Asigna el char en el espacio vacío del frame
-            unidad[marco].marco[i] = datos[0];
-            // Borra el primer elemento del vector
-            datos.erase(datos.begin());
-          }
-        }
+    if (unidad[j].marco[0] == '\0') {
+      if (directorio[posicion].bloqueInicio == -1) {
+        // Asigna el primer bloque al inicio del archivo
+        directorio[posicion].bloqueInicio = j;
+        marco = j;
+      } else {
+        // Actualiza FAT con la posición anterior
+        tablaBloques[posAnterior] = j;
+        marco = j;
+      }
+      posAnterior = j;
+
+      // Guardar los datos en el frame
+      for (int i = 0; i < TAM_BLOQUE && !datos.empty(); ++i) {
+        unidad[marco].marco[i] =
+            datos[0];  // Asigna el char en el espacio vacío del frame
+        datos.erase(datos.begin());  // Borra el primer elemento del vector
       }
     }
-    
+  }
+
+  directorio[posicion].bloqueFin = posAnterior;
+  directorio[posicion].cursor += dataSize;
+  std::cout << "cursor " << directorio[posicion].cursor << std::endl;
+}
+
+void SistemaArchivosFAT::escribir(const std::string& nombreArchivo,
+                                  std::vector<char>& datos) {
+  int posicion = encontrarArchivo(nombreArchivo);
+  if (posicion == -1) return;  // Si no se encuentra el archivo, salir
+  int dataSize = datos.size();
+  int posAnterior =
+      -1;  // Iniciar con -1 para indicar que no hay posición anterior
+  int marco = 0;
+
+  // Ingresar datos a la unidad
+  for (int j = 0; j < TAM_UNIDAD / TAM_BLOQUE && !datos.empty(); ++j) {
+    // Si se encuentra un marco vacío en la unidad
+    if (unidad[j].marco[0] == '\0') {
+      if (directorio[posicion].bloqueInicio == -1) {
+        // Asigna el primer bloque al inicio del archivo
+        directorio[posicion].bloqueInicio = j;
+        marco = j;
+      } else {
+        // Actualiza FAT con la posición anterior
+        tablaBloques[posAnterior] = j;
+        marco = j;
+      }
+      posAnterior = j;
+
+      // Guardar los datos en el frame
+      for (int i = 0; i < TAM_BLOQUE && !datos.empty(); ++i) {
+        unidad[marco].marco[i] =
+            datos[0];  // Asigna el char en el espacio vacío del frame
+        datos.erase(datos.begin());  // Borra el primer elemento del vector
+      }
+    }
   }
   directorio[posicion].bloqueFin = posAnterior;
-  
+  directorio[posicion].cursor += dataSize;
+  std::cout << "cursor " << directorio[posicion].cursor << std::endl;
 }
 
-void SistemaArchivosFAT::imprimir(){
-    std::cout << "Tabla de asignación de bloques (FAT):" << std::endl;
-    for (int i = 0; i < 10; ++i) {
-        std::cout << "Bloque " << i << ": " << tablaBloques[i] << std::endl;
-    }
+void SistemaArchivosFAT::imprimir() {
+  std::cout << "Tabla de asignación de bloques (FAT):" << std::endl;
+  for (int i = 0; i < 10; ++i) {
+    std::cout << "Bloque " << i << ": " << tablaBloques[i] << std::endl;
+  }
 
-    std::cout << "\nContenido de los bloques:" << std::endl;
-    for (int i = 0; i < 10; ++i) {
-        std::cout << "Bloque " << i << ": ";
-        for (int j = 0; j < 8; ++j) {
-            if (unidad[i].marco[j] != '\0') {
-                std::cout << unidad[i].marco[j] << " ";
-            }
-        }
-        std::cout << std::endl;
+  std::cout << "\nContenido de los bloques:" << std::endl;
+  for (int i = 0; i < 10; ++i) {
+    std::cout << "Bloque " << i << ": ";
+    for (int j = 0; j < 8; ++j) {
+      if (unidad[i].marco[j] != '\0') {
+        std::cout << unidad[i].marco[j] << " ";
+      }
     }
+    std::cout << std::endl;
+  }
 }
 
-// verificar despues si la funcionalidad se deja o no, podria ser esta la idea de estos metodos
 void SistemaArchivosFAT::buscar(const std::string& nombreArchivo) {
-// Es una logica mas informativa de donde esta el archivo y su bloque y demas
+  // Es una logica mas informativa de donde esta el archivo y su bloque y demas
   int posicion = encontrarArchivo(nombreArchivo);
-
   if (posicion != -1) {
-    std::cout << "Archivo encontrado: " << directorio[posicion].nombre << std::endl;
-    std::cout << "Bloque de inicio: " << directorio[posicion].bloqueInicio << std::endl;
-    std::cout << "Bloque final: " << directorio[posicion].bloqueFin << std::endl;
-    std::cout << "Estado: " << (directorio[posicion].abierto ? "Abierto" : "Cerrado") << std::endl;
+    std::cout << "Archivo encontrado: " << directorio[posicion].nombre
+              << std::endl;
+    std::cout << "Bloque de inicio: " << directorio[posicion].bloqueInicio
+              << std::endl;
+    std::cout << "Bloque final: " << directorio[posicion].bloqueFin
+              << std::endl;
+    std::cout << "Estado: "
+              << (directorio[posicion].abierto ? "Abierto" : "Cerrado")
+              << std::endl;
   } else {
-    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado." << std::endl;
+    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
+              << std::endl;
   }
 }
 
@@ -262,38 +264,32 @@ void SistemaArchivosFAT::borrar(const std::string& nombreArchivo) {
 
 void SistemaArchivosFAT::adjuntar(const std::string& nombreArchivo,
                                   std::vector<char>& datos) {
-  // Buscar el archivo
   int posicionOriginal = encontrarArchivo(nombreArchivo);
-  int marco = -1;
- 
+  if (posicionOriginal == -1) return;  // Si no se encuentra el archivo, salir
+
+  int marco =
+      directorio[posicionOriginal].bloqueFin;  // Empieza desde el bloque final
+  int posAnterior = -1;  // Para mantener el rastro del bloque anterior
+
   // Ingresar datos a la unidad
-  if (posicionOriginal != -1) {
-    int posicionActual = -1;
+  for (int j = 0; j < TAM_UNIDAD / TAM_BLOQUE && !datos.empty(); ++j) {
+    if (unidad[j].marco[0] == '\0') {  // Si se encuentra un marco vacío
+      if (marco == -1) {
+        directorio[posicionOriginal].bloqueInicio = j;
+      } else {
+        tablaBloques[marco] = j;  // Actualiza la FAT
+      }
+      marco = j;
 
-    marco = directorio[posicionOriginal].bloqueFin;
-    for (marco; marco < TAM_UNIDAD / TAM_BLOQUE && !datos.empty(); ++marco) {
-      posicionActual = marco;
-
-      //Actualizar tabla de bloques
-      tablaBloques[posicionActual-1] = marco;
-
-      escribir(nombreArchivo, datos);
-    }
-    directorio[posicionOriginal].bloqueFin = posicionActual;
-  };
-}
-
-
-void SistemaArchivosFAT::escribirAdjuntando(size_t marco, std::vector<char>& datos) {
-  for (int i = 0; i < TAM_BLOQUE && !datos.empty(); ++i) {
-    // Revisa que sea un marco vacío
-    if (unidad[marco].marco[i] == '\0') {
-      // Asigna el char en el espacio vacío del frame
-      unidad[marco].marco[i] = datos[0];
-      // Borra el primer elemento del vector
-      datos.erase(datos.begin());
+      // Guardar los datos en el bloque
+      for (int i = 0; i < TAM_BLOQUE && !datos.empty(); ++i) {
+        unidad[marco].marco[i] = datos[0];
+        datos.erase(datos.begin());  // Elimina el dato escrito
+      }
     }
   }
+
+  directorio[posicionOriginal].bloqueFin = marco;
 }
 
 void SistemaArchivosFAT::renombrar(const std::string& nombreArchivo,
@@ -325,17 +321,11 @@ void SistemaArchivosFAT::renombrar(const std::string& nombreArchivo,
 
 void SistemaArchivosFAT::listar() {
   for (size_t i = 0; i < cantidadDirectorios; i++) {
- 
-      std::cout << "Contenido de la dirección: " << i << " | "
-                << "Nombre del archivo: " << directorio[i].nombre
-                << " | Bloque de inicio: " << directorio[i].bloqueInicio
-                << " | Bloque final: " << directorio[i].bloqueFin
-                << " | Estado: " << (directorio[i].abierto ? " Abierto" : " Cerrado")
-                << std::endl;
-    
-    //  else {
-    //   std::cout << "Directorio vacío en la posición: " << i << std::endl;
-    // }
+    std::cout << "Contenido de la dirección: " << i << " | "
+              << "Nombre del archivo: " << directorio[i].nombre
+              << " | Bloque de inicio: " << directorio[i].bloqueInicio
+              << " | Bloque final: " << directorio[i].bloqueFin << " | Estado: "
+              << (directorio[i].abierto ? " Abierto" : " Cerrado") << std::endl;
   }
 }
 
@@ -350,12 +340,4 @@ int SistemaArchivosFAT::encontrarArchivo(const std::string& nombreArchivo) {
   std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
             << std::endl;
   return -1;  // Retorna -1 si no se encuentra el archivo
-}
-
-int SistemaArchivosFAT::asignarBloques(int tamano) {
-  // Implementar
-}
-
-void SistemaArchivosFAT::liberarBloques(int bloqueInicio) {
-  // Implementar
 }

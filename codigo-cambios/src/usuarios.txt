@@ -1,0 +1,12 @@
+char[40] user_id,             //0
+char[60] name,                //1
+char[50] pass,                //2
+char[5]  admin                //3
+bool state                    //4
+bool floor1                   //5
+bool floor2                   //6
+bool floor3                   //7
+bool sensor1                  //8
+bool sensor2                  //9
+bool sensor3                  //10
+bool sensor4                  //11
