@@ -120,11 +120,9 @@ void SistemaArchivosFAT::escribirA(const std::string& nombreArchivo,
     if (directorio[posicion].cursor != 0 && directorio[posicion].cursor > 8) {
       // comente esto pq esta incompleto
       for (int k = 0; k < 8; k++)
-      if(unidad[directorio[posicion].cursor / 8].marco[0] == '\0') {
-
-      }
+        if (unidad[directorio[posicion].cursor / 8].marco[0] == '\0') {
+        }
     } else {
-      
     }
   }
   // Ingresar datos a la unidad
@@ -193,37 +191,10 @@ void SistemaArchivosFAT::escribir(const std::string& nombreArchivo,
   std::cout << "cursor " << directorio[posicion].cursor << std::endl;
 }
 
-void SistemaArchivosFAT::imprimir() {
-  std::cout << "Tabla de asignación de bloques (FAT):" << std::endl;
-  for (int i = 0; i < 10; ++i) {
-    std::cout << "Bloque " << i << ": " << tablaBloques[i] << std::endl;
-  }
-
-  std::cout << "\nContenido de los bloques:" << std::endl;
-  for (int i = 0; i < 10; ++i) {
-    std::cout << "Bloque " << i << ": ";
-    for (int j = 0; j < 8; ++j) {
-      if (unidad[i].marco[j] != '\0') {
-        std::cout << unidad[i].marco[j] << " ";
-      }
-    }
-    std::cout << std::endl;
-  }
-}
-
 void SistemaArchivosFAT::buscar(const std::string& nombreArchivo) {
-  // Es una logica mas informativa de donde esta el archivo y su bloque y demas
   int posicion = encontrarArchivo(nombreArchivo);
   if (posicion != -1) {
-    std::cout << "Archivo encontrado: " << directorio[posicion].nombre
-              << std::endl;
-    std::cout << "Bloque de inicio: " << directorio[posicion].bloqueInicio
-              << std::endl;
-    std::cout << "Bloque final: " << directorio[posicion].bloqueFin
-              << std::endl;
-    std::cout << "Estado: "
-              << (directorio[posicion].abierto ? "Abierto" : "Cerrado")
-              << std::endl;
+    imprimirInformacionArchivo(posicion);
   } else {
     std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
               << std::endl;
@@ -320,16 +291,6 @@ void SistemaArchivosFAT::renombrar(const std::string& nombreArchivo,
             << std::endl;
 }
 
-void SistemaArchivosFAT::listar() {
-  for (size_t i = 0; i < cantidadDirectorios; i++) {
-    std::cout << "Contenido de la dirección: " << i << " | "
-              << "Nombre del archivo: " << directorio[i].nombre
-              << " | Bloque de inicio: " << directorio[i].bloqueInicio
-              << " | Bloque final: " << directorio[i].bloqueFin << " | Estado: "
-              << (directorio[i].abierto ? " Abierto" : " Cerrado") << std::endl;
-  }
-}
-
 int SistemaArchivosFAT::encontrarArchivo(const std::string& nombreArchivo) {
   for (size_t i = 0; i < cantidadDirectorios; i++) {
     if (directorio[i].nombre == nombreArchivo) {
@@ -341,4 +302,42 @@ int SistemaArchivosFAT::encontrarArchivo(const std::string& nombreArchivo) {
   std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
             << std::endl;
   return -1;  // Retorna -1 si no se encuentra el archivo
+}
+
+void SistemaArchivosFAT::imprimir() {
+  std::cout << "Tabla de asignación de bloques (FAT):" << std::endl;
+  for (int i = 0; i < 10; ++i) {
+    std::cout << "Bloque " << i << ": " << tablaBloques[i] << std::endl;
+  }
+
+  std::cout << "\nContenido de los bloques:" << std::endl;
+  for (int i = 0; i < 10; ++i) {
+    std::cout << "Bloque " << i << ": ";
+    for (int j = 0; j < 8; ++j) {
+      if (unidad[i].marco[j] != '\0') {
+        std::cout << unidad[i].marco[j] << " ";
+      }
+    }
+    std::cout << std::endl;
+  }
+}
+
+void SistemaArchivosFAT::listar() {
+  if (cantidadDirectorios == 0) {
+    std::cout << "No hay archivos en el sistema." << std::endl;
+    return;
+  }
+
+  for (size_t i = 0; i < cantidadDirectorios; i++) {
+    imprimirInformacionArchivo(i);  // Modularización
+  }
+}
+
+void SistemaArchivosFAT::imprimirInformacionArchivo(size_t index) {
+  std::cout << "Contenido de la dirección: " << index
+            << " | Nombre del archivo: " << directorio[index].nombre
+            << " | Bloque de inicio: " << directorio[index].bloqueInicio
+            << " | Bloque final: " << directorio[index].bloqueFin
+            << " | Estado: "
+            << (directorio[index].abierto ? "Abierto" : "Cerrado") << std::endl;
 }
