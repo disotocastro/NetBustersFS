@@ -45,9 +45,11 @@ int main() {
   // Listar todos los archivos para verificar el estado
   std::cout << "\n--- Estado final del sistema de archivos ---\n";
   fs.listar();
+  fs.buscar("file1.txt");
   fs.buscar("file2.txt");
+  fs.buscar("file3.txt");
+  fs.buscar("file4.txt");
 
-  std::cout << "imprmir<111" << std::endl;
   fs.imprimir();
 
   return 0;

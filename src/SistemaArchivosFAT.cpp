@@ -31,39 +31,29 @@ void SistemaArchivosFAT::abrir(const std::string& nombreArchivo, bool verbose) {
         std::cout << "El archivo '" << nombreArchivo << "' ya está abierto."
                   << std::endl;
       } else {
-        directorio[posicion].abierto = true;  // Marcar el archivo como abierto
+        directorio[posicion].abierto = true;
         std::cout << "El archivo '" << nombreArchivo << "' ha sido abierto."
                   << std::endl;
       }
     } else {
-      std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
-                << std::endl;
-    }
-
-  } else {
-    if (posicion != -1) {
-      if (directorio[posicion].abierto == false) {
-        directorio[posicion].abierto = true;  // Marcar el archivo como abierto
-      }
+      imprimirArchivoNoEncontrado(nombreArchivo);  // Usar función auxiliar
     }
   }
 }
 
 void SistemaArchivosFAT::cerrar(const std::string& nombreArchivo) {
   int posicion = encontrarArchivo(nombreArchivo);
-
   if (posicion != -1) {
     if (!directorio[posicion].abierto) {
       std::cout << "El archivo '" << nombreArchivo << "' ya está cerrado."
                 << std::endl;
     } else {
-      directorio[posicion].abierto = false;  // Marcar el archivo como cerrado
+      directorio[posicion].abierto = false;
       std::cout << "El archivo '" << nombreArchivo << "' ha sido cerrado."
                 << std::endl;
     }
   } else {
-    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
-              << std::endl;
+    imprimirArchivoNoEncontrado(nombreArchivo);  // Usar función auxiliar
   }
 }
 
@@ -102,8 +92,7 @@ void SistemaArchivosFAT::leer(const std::string& nombreArchivo) {
 
     std::cout << std::endl;
   } else {
-    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
-              << std::endl;
+    imprimirArchivoNoEncontrado(nombreArchivo);
   }
 }
 
@@ -196,8 +185,7 @@ void SistemaArchivosFAT::buscar(const std::string& nombreArchivo) {
   if (posicion != -1) {
     imprimirInformacionArchivo(posicion);
   } else {
-    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
-              << std::endl;
+    imprimirArchivoNoEncontrado(nombreArchivo);
   }
 }
 
@@ -205,7 +193,7 @@ void SistemaArchivosFAT::borrar(const std::string& nombreArchivo) {
   int siguienteBloque = 0;
   int bloqueInicio = 0;
 
-  for (size_t i = 0; i < cantidadDirectorios; i++) {
+  for (int i = 0; i < cantidadDirectorios; i++) {
     // Si existe el archivo en el directorio
     if (directorio[i].nombre == nombreArchivo) {
       bloqueInicio = directorio[i].bloqueInicio;
@@ -230,8 +218,7 @@ void SistemaArchivosFAT::borrar(const std::string& nombreArchivo) {
     }
   }
 
-  std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
-            << std::endl;
+  imprimirArchivoNoEncontrado(nombreArchivo);  // Usar función auxiliar
 }
 
 void SistemaArchivosFAT::adjuntar(const std::string& nombreArchivo,
@@ -271,8 +258,7 @@ void SistemaArchivosFAT::renombrar(const std::string& nombreArchivo,
 
   // Si no se encuentra el archivo original, mostrar error
   if (posicionOriginal == -1) {
-    std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
-              << std::endl;
+    imprimirArchivoNoEncontrado(nombreArchivo);
     return;
   }
 
@@ -292,16 +278,13 @@ void SistemaArchivosFAT::renombrar(const std::string& nombreArchivo,
 }
 
 int SistemaArchivosFAT::encontrarArchivo(const std::string& nombreArchivo) {
-  for (size_t i = 0; i < cantidadDirectorios; i++) {
+  for (int i = 0; i < cantidadDirectorios; i++) {
     if (directorio[i].nombre == nombreArchivo) {
-      std::cout << "Archivo '" << nombreArchivo << "' encontrado." << std::endl;
-      return i;  // Retorna la posición en el directorio si se encuentra
+      imprimirArchivoEncontrado(nombreArchivo);
+      return i;
     }
   }
-
-  std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
-            << std::endl;
-  return -1;  // Retorna -1 si no se encuentra el archivo
+  return -1;
 }
 
 void SistemaArchivosFAT::imprimir() {
@@ -328,8 +311,8 @@ void SistemaArchivosFAT::listar() {
     return;
   }
 
-  for (size_t i = 0; i < cantidadDirectorios; i++) {
-    imprimirInformacionArchivo(i);  // Modularización
+  for (int i = 0; i < cantidadDirectorios; i++) {
+    imprimirInformacionArchivo(i);
   }
 }
 
@@ -340,4 +323,15 @@ void SistemaArchivosFAT::imprimirInformacionArchivo(size_t index) {
             << " | Bloque final: " << directorio[index].bloqueFin
             << " | Estado: "
             << (directorio[index].abierto ? "Abierto" : "Cerrado") << std::endl;
+}
+
+void SistemaArchivosFAT::imprimirArchivoEncontrado(
+    const std::string& nombreArchivo) const {
+  std::cout << "Archivo '" << nombreArchivo << "' encontrado." << std::endl;
+}
+
+void SistemaArchivosFAT::imprimirArchivoNoEncontrado(
+    const std::string& nombreArchivo) const {
+  std::cout << "Error: Archivo '" << nombreArchivo << "' no encontrado."
+            << std::endl;
 }

@@ -62,6 +62,9 @@ class SistemaArchivosFAT {
   void escribir(const std::string& nombreArchivo, std::vector<char>& datos);
   void imprimir();
   void imprimirInformacionArchivo(size_t index);
+
+  void imprimirArchivoEncontrado(const std::string& nombreArchivo) const;
+  void imprimirArchivoNoEncontrado(const std::string& nombreArchivo) const;
 };
 
 #endif  // SISTEMA_ARCHIVOS_FAT_HPP
