@@ -87,7 +87,7 @@ bool SistemaArchivosFAT::renombrar(const std::string& nombreArchivo,
     int posicionNueva = buscar(nuevoNombre);
     if (posicionNueva == -1) {
       directorio[posicionOriginal].nombre = nuevoNombre;
-    }else{
+    } else {
       result = false;
     }
   } else if (posicionOriginal == -1) {
@@ -126,7 +126,7 @@ void SistemaArchivosFAT::escribir(const std::string& nombreArchivo,
                              // posiciones del FAT y el cursor es
     if (cursor == 0) {
       for (int i = 0; i < (TAM_BLOQUE) && (!dato.empty()); i++) {
-        if(unidad[i].marco[0]== '\0') {
+        if (unidad[i].marco[0] == '\0') {
           if (directorio[posicion].bloqueInicio == -1) {
             // Asigna el primer bloque al inicio del archivo
             directorio[posicion].bloqueInicio = i;
@@ -141,18 +141,20 @@ void SistemaArchivosFAT::escribir(const std::string& nombreArchivo,
             if (!dato.empty()) {
               // escribe los datos
               unidad[i].marco[j] = dato[0];
+              archivo.tamaño++;
               dato.erase(0, 1);
             }
           }
         }
       }
     } else {
-      if (cursor != 0){
+      if (cursor != 0) {
         // en el caso que el cursor no este acomodado
-        for (int i = cursor / TAM_BLOQUE; i < TAM_BLOQUE && (!dato.empty()); i++) {
+        for (int i = cursor / TAM_BLOQUE; i < TAM_BLOQUE && (!dato.empty());
+             i++) {
           // Actualiza FAT con la posición anterior
           posAnterior = i - 1;
-          std::cout<<posAnterior;
+          std::cout << posAnterior;
           tablaBloques[posAnterior] = i;
           posAnterior = i;
           // axiliar para sobreescribir
@@ -165,6 +167,7 @@ void SistemaArchivosFAT::escribir(const std::string& nombreArchivo,
               if (!dato.empty()) {
                 unidad[i].marco[j] = dato[0];
                 dato.erase(0, 1);
+                archivo.tamaño++;
                 auxMarco = true;
               }
             } else {
@@ -172,6 +175,7 @@ void SistemaArchivosFAT::escribir(const std::string& nombreArchivo,
               if (auxMarco) {
                 if (!dato.empty()) {
                   unidad[i].marco[j] = dato[0];
+                  archivo.tamaño++;
                   dato.erase(0, 1);
                 }
               }
@@ -183,15 +187,77 @@ void SistemaArchivosFAT::escribir(const std::string& nombreArchivo,
     directorio[posicion].bloqueFin = posAnterior;
     directorio[posicion].cursor += unidadCursor;
   } else {
-    std::cout<< " NO se pudo escribir el archivo" << std::endl;
+    std::cout << " No se pudo escribir el archivo" << std::endl;
   }
 }
 
-void SistemaArchivosFAT::cambiarCursor(const std::string& nombreArchivo, int pos){
+void SistemaArchivosFAT::cambiarCursor(const std::string& nombreArchivo,
+                                       int pos) {
   for (int i = 0; i < cantidadDirectorios; i++) {
     if (directorio[i].nombre == nombreArchivo) {
-      //imprimirArchivoEncontrado(nombreArchivo);
+      // imprimirArchivoEncontrado(nombreArchivo);
       directorio[i].cursor = pos;
     }
   }
+}
+
+std::string SistemaArchivosFAT::leer(const std::string& nombreArchivo,
+                                     int cantidadLeer) {
+  int posicion = buscar(nombreArchivo);
+  sincronizarCursor(posicion, 0);
+  if (posicion == -1) {
+    return "";
+  }
+
+  Archivo& archivo = directorio[posicion];
+  // Evitar lectura fuera del tamaño del archivo
+  if (archivo.cursor + cantidadLeer > archivo.tamaño) {
+    cantidadLeer = archivo.tamaño - archivo.cursor;
+  }
+
+  if (cantidadLeer <= 0) {
+    return "";
+  }
+
+  int cursor = archivo.cursor;
+  int bloqueActual = archivo.bloqueInicio;
+  std::string datosLeidos;
+  int bytesLeidos = 0;
+
+  // Recorrer la FAT para llegar al bloque donde está el cursor
+  while ((bytesLeidos < cursor) && bloqueActual != -1) {
+    bloqueActual = tablaBloques[bloqueActual];
+    bytesLeidos += TAM_BLOQUE;
+  }
+
+  // Calcular el offset dentro del bloque actual
+  int offsetEnBloque = cursor % TAM_BLOQUE;
+  bytesLeidos = 0;
+
+  while ((bytesLeidos < cantidadLeer) && bloqueActual != -1) {
+    // Calcular cuántos bytes quedan por leer en este bloque
+    int bytesRestantesEnBloque = TAM_BLOQUE - offsetEnBloque;
+    int bytesPorLeer =
+        std::min(bytesRestantesEnBloque, cantidadLeer - bytesLeidos);
+
+    // Leer los datos del bloque actual
+
+    for (int i = offsetEnBloque; i < offsetEnBloque + bytesPorLeer; i++) {
+      datosLeidos += unidad[bloqueActual].marco[i];
+    }
+
+    bytesLeidos += bytesPorLeer;
+    offsetEnBloque = 0;  // Para los siguientes bloques, leer desde el inicio
+    // Mover al siguiente bloque en la FAT
+    bloqueActual = tablaBloques[bloqueActual];
+  }
+
+  // Actualizar el cursor
+  archivo.cursor += bytesLeidos;
+
+  return datosLeidos;
+}
+
+void SistemaArchivosFAT::sincronizarCursor(int archivo, const int posicion) {
+  directorio[archivo].cursor = posicion;
 }

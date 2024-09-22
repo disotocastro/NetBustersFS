@@ -50,6 +50,7 @@ struct Archivo {
         permisos("r--"),
         usuario(""),
         proceso(-1),
+        tamaño(0),
         cursor(0) {}
 };
 
