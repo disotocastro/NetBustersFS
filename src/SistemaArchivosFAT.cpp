@@ -36,6 +36,7 @@ bool SistemaArchivosFAT::abrir(const std::string& nombreArchivo) {
   if (posicion != -1) {
     if (!directorio[posicion].abierto) {
       directorio[posicion].abierto = true;
+      result = true;
     }
   }
   return result;
@@ -114,80 +115,71 @@ void SistemaArchivosFAT::imprimir() {
   }
 }
 
-void SistemaArchivosFAT::escribir(const std::string& nombreArchivo,
-                                  std::string dato) {
+void SistemaArchivosFAT::escribir(const std::string& nombreArchivo, std::string dato) {
   int posicion = buscar(nombreArchivo);
   if (posicion != -1) {
     Archivo& archivo = directorio[posicion];
-    int cursor = archivo.cursor;
-    int posAnterior = -1;
-    int unidadCursor = dato.length();
-    int auxiliarCursor = 0;  // se utiliza cunado se quierren poner las
-                             // posiciones del FAT y el cursor es
-    if (cursor == 0) {
-      for (int i = 0; i < (TAM_BLOQUE) && (!dato.empty()); i++) {
-        if (unidad[i].marco[0] == '\0') {
-          if (directorio[posicion].bloqueInicio == -1) {
-            // Asigna el primer bloque al inicio del archivo
-            directorio[posicion].bloqueInicio = i;
-          } else {
-            // Actualiza FAT con la posición anterior
-            tablaBloques[posAnterior] = i;
-          }
-          // actualiza la posicion anterior
-          posAnterior = i;
-          // recorre el FAT y escribe ahi
-          for (int j = 0; j < TAM_BLOQUE && (!dato.empty()); j++) {
-            if (!dato.empty()) {
-              // escribe los datos
-              unidad[i].marco[j] = dato[0];
-              archivo.tamaño++;
-              dato.erase(0, 1);
-            }
-          }
-        }
-      }
-    } else {
-      if (cursor != 0) {
-        // en el caso que el cursor no este acomodado
-        for (int i = cursor / TAM_BLOQUE; i < TAM_BLOQUE && (!dato.empty());
-             i++) {
-          // Actualiza FAT con la posición anterior
-          posAnterior = i - 1;
-          std::cout << posAnterior;
-          tablaBloques[posAnterior] = i;
-          posAnterior = i;
-          // axiliar para sobreescribir
-          bool auxMarco = false;
+    int cursor = archivo.cursor;  // Posición del cursor en el archivo
+    int bloqueActual = archivo.bloqueInicio;  // Bloque donde inicia el archivo
+    int unidadCursor = dato.length();  // Número de caracteres a escribir
+    int tamBloqueLibre;  // Espacio libre en el bloque actual
 
-          // escribe en la unidad la informacion de datos y hash
-          for (int j = 0; j < TAM_BLOQUE && !dato.empty(); ++j) {
-            // condicion para que inicie exactamente donde esta el puntero
-            if (i == (cursor / TAM_BLOQUE) && j == (cursor % TAM_BLOQUE)) {
-              if (!dato.empty()) {
-                unidad[i].marco[j] = dato[0];
-                dato.erase(0, 1);
-                archivo.tamaño++;
-                auxMarco = true;
-              }
-            } else {
-              // si ya sobreescribio en la primera letra, entonces que siga
-              if (auxMarco) {
-                if (!dato.empty()) {
-                  unidad[i].marco[j] = dato[0];
-                  archivo.tamaño++;
-                  dato.erase(0, 1);
-                }
-              }
-            }
-          }
+    // Si el archivo no tiene bloques asignados, asignar el primer bloque
+    if (bloqueActual == -1) {
+      for (int i = 0; i < TAM_TABLA; ++i) {
+        if (tablaBloques[i] == 0) {  // Encuentra un bloque libre
+          bloqueActual = i;
+          directorio[posicion].bloqueInicio = i;
+          tablaBloques[i] = -1;  // Marcar como el último bloque del archivo
+          break;
         }
       }
     }
-    directorio[posicion].bloqueFin = posAnterior;
+
+    // Recorrer todos los bloques ya asignados
+    while (cursor > TAM_BLOQUE) {
+      bloqueActual = tablaBloques[bloqueActual];  // Mover al siguiente bloque
+      cursor -= TAM_BLOQUE;
+    }
+
+    while (!dato.empty()) {
+      tamBloqueLibre = TAM_BLOQUE - (cursor % TAM_BLOQUE);  // Espacio restante en el bloque actual
+
+      // Escribir datos en el bloque actual
+      for (int i = cursor % TAM_BLOQUE; i < TAM_BLOQUE && !dato.empty(); ++i) {
+        unidad[bloqueActual].marco[i] = dato[0];
+        dato.erase(0, 1);  // Eliminar el carácter escrito
+        archivo.tamaño++;
+      }
+
+      // Si aún quedan datos por escribir, asignar un nuevo bloque
+      if (!dato.empty()) {
+        int nuevoBloque = -1;
+        for (int i = 0; i < TAM_TABLA; ++i) {
+          if (tablaBloques[i] == 0) {  // Encuentra un bloque libre
+            nuevoBloque = i;
+            tablaBloques[bloqueActual] = nuevoBloque;  // Enlazar con el bloque actual
+            tablaBloques[nuevoBloque] = -1;  // Marcar como el último bloque
+            bloqueActual = nuevoBloque;
+            break;
+          }
+        }
+
+        if (nuevoBloque == -1) {
+          std::cout << "No hay bloques disponibles para escribir más datos." << std::endl;
+          return;
+        }
+      }
+
+      // Reiniciar cursor para el nuevo bloque
+      cursor = 0;
+    }
+
+    // Actualizar bloque final y cursor del archivo
+    directorio[posicion].bloqueFin = bloqueActual;
     directorio[posicion].cursor += unidadCursor;
   } else {
-    std::cout << " No se pudo escribir el archivo" << std::endl;
+    std::cout << "No se pudo escribir en el archivo, no existe." << std::endl;
   }
 }
 
