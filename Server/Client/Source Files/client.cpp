@@ -67,12 +67,18 @@ void deleteFile(int socket, const std::string& fileName) {
 void sendFileContent(int socket, const std::string& fileName) {
     std::ifstream file(fileName);
     if (!file.is_open()) {
-        std::cerr << "Error opening file: " << fileName << std::endl;
-        return;
+        std::ofstream newFile(fileName);
+        newFile << "Initial content";
+        newFile.close();
+        file.open(fileName);
+        if (!file.is_open()) {
+            std::cerr << "Error creating or opening file: " << fileName << std::endl;
+            return;
+        }
     }
 
     std::ostringstream fileContent;
-    fileContent << file.rdbuf();  // Read the file content into the stream
+    fileContent << file.rdbuf();
     file.close();
 
     std::string command = "save " + fileName + " " + fileContent.str();
@@ -80,6 +86,8 @@ void sendFileContent(int socket, const std::string& fileName) {
     std::string response = receiveResponse(socket);
     std::cout << "Server response: " << response << std::endl;
 }
+
+
 void authenticate(int socket, const std::string& username, const std::string& password) {
     std::string command = "authenticate " + username + " " + password;
     sendCommand(socket, command);

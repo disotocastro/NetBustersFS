@@ -65,7 +65,6 @@ int main() {
     socklen_t addrLen = sizeof(clientAddr);
     char buffer[1024] = {0};
 
-    // Create the server socket
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == 0) {
         std::cerr << "Error creating the server socket" << std::endl;
@@ -103,10 +102,10 @@ int main() {
         // Keep the connection open until the client sends "exit"
         bool keepConnection = true;
         while (keepConnection) {
-            memset(buffer, 0, 1024);  // Clear the buffer before each read
+            memset(buffer, 0, 1024);
             int bytesRead = read(clientSocket, buffer, 1024);
             if (bytesRead <= 0) {
-                keepConnection = false;  // End the connection if no data is received
+                keepConnection = false;
                 break;
             }
 
@@ -115,7 +114,7 @@ int main() {
 
             // Process the command
             if (command.find("exit") == 0) {
-                keepConnection = false;  // Exit the loop if "exit" is received
+                keepConnection = false;
                 std::string response = "Closing the connection...\n";
                 send(clientSocket, response.c_str(), response.size(), 0);
             } else {
