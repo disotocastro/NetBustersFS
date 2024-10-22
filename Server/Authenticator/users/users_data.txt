@@ -1,2 +1,0 @@
-tatis.txt,bf859476c9388014979c9e38dc87aa37ee12a197db7690d8a7b882e2fe03d2aa,tatis@peru.com,Tatis Para,1,1,1,1,1,1,1,1
-paula.txt,94d7680bfc1b47989a67bddc6893d9cee1efb2ff0856358fa648c3955c26491a,paula@ucr,Paula Marin,2,1,0,1,1,0,1,1

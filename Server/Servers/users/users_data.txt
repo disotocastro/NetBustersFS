@@ -1,0 +1,2 @@
+tatis.txt,password123,tatis@peru.com,Tatis Para,1,1,1,1,1,1,1,1
+paula.txt,pass456,paula@ucr,Paula Marin,2,1,0,1,1,0,1,1

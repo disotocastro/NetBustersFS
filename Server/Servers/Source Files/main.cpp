@@ -21,9 +21,13 @@ void handleCommand(Filesystem &fs, const std::string &command, int clientSocket)
         std::string fileName = command.substr(firstSpace + 1, secondSpace - firstSpace - 1);
         std::string data = command.substr(secondSpace + 1);
 
-        fs.write(fileName, data);
-        std::string response = "Data saved to: " + fileName + "\n";
-        send(clientSocket, response.c_str(), response.size(), 0);
+        if (fs.overwrite(fileName, data)) {
+            std::string response = "File content saved: " + fileName + "\n";
+            send(clientSocket, response.c_str(), response.size(), 0);
+        } else {
+            std::string response = "Error saving content to: " + fileName + "\n";
+            send(clientSocket, response.c_str(), response.size(), 0);
+        }
     } else if (command.find("deleteFile") == 0) {
         std::string fileName = command.substr(command.find(" ") + 1);
         if (fs.remove(fileName)) {
@@ -31,6 +35,20 @@ void handleCommand(Filesystem &fs, const std::string &command, int clientSocket)
             send(clientSocket, response.c_str(), response.size(), 0);
         } else {
             std::string response = "Error deleting file: " + fileName + "\n";
+            send(clientSocket, response.c_str(), response.size(), 0);
+        }
+    } else if (command.find("authenticate") == 0) {
+        size_t firstSpace = command.find(" ");
+        size_t secondSpace = command.find(" ", firstSpace + 1);
+        std::string username = command.substr(firstSpace + 1, secondSpace - firstSpace - 1);
+        std::string password = command.substr(secondSpace + 1);
+
+        int position = fs.search(username);
+        if (position != -1 && fs.getFile(position).password == password) {
+            std::string response = "Authentication successful\n";
+            send(clientSocket, response.c_str(), response.size(), 0);
+        } else {
+            std::string response = "Authentication failed\n";
             send(clientSocket, response.c_str(), response.size(), 0);
         }
     } else {

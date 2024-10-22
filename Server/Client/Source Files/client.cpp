@@ -62,3 +62,27 @@ void deleteFile(int socket, const std::string& fileName) {
     std::string response = receiveResponse(socket);
     std::cout << "Server response: " << response << std::endl;
 }
+
+
+void sendFileContent(int socket, const std::string& fileName) {
+    std::ifstream file(fileName);
+    if (!file.is_open()) {
+        std::cerr << "Error opening file: " << fileName << std::endl;
+        return;
+    }
+
+    std::ostringstream fileContent;
+    fileContent << file.rdbuf();  // Read the file content into the stream
+    file.close();
+
+    std::string command = "save " + fileName + " " + fileContent.str();
+    sendCommand(socket, command);
+    std::string response = receiveResponse(socket);
+    std::cout << "Server response: " << response << std::endl;
+}
+void authenticate(int socket, const std::string& username, const std::string& password) {
+    std::string command = "authenticate " + username + " " + password;
+    sendCommand(socket, command);
+    std::string response = receiveResponse(socket);
+    std::cout << "Authentication response: " << response << std::endl;
+}
