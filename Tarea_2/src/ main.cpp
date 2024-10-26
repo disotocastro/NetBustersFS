@@ -1,5 +1,4 @@
 #include "PageTable.hpp"
-#include "BackingStore.hpp"
 #include "PhysicalMemory.hpp"
 #include "AddressTranslator.hpp"
 
@@ -8,15 +7,14 @@
 #include <iomanip>
 
 int main() {
-    // Inicializar componentes
+    // Iniciar componentes
     PageTable pageTable;
-    BackingStore backingStore(256); // Respaldo con 256 páginas
     PhysicalMemory physicalMemory(256); // Memoria física con 256 marcos
 
     // Crear el traductor de direcciones
-    AddressTranslator translator(pageTable, backingStore, physicalMemory);
+    AddressTranslator translator(pageTable, physicalMemory);
 
-    // Abrir el archivo de direcciones lógicas
+    // Abrir el archivo de entradas
     std::ifstream inputFile("addresses.txt");
     if (!inputFile) {
         std::cerr << "Error: No se pudo abrir el archivo addresses.txt" << std::endl;

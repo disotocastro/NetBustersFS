@@ -1,10 +1,10 @@
-# Proyecto: Diseño de un Administrador de Memoria Virtual
+# Diseño de un Administrador de Memoria Virtual
 
 ## Descripción
 
-Este proyecto consiste en la implementación de un sistema para gestionar la memoria virtual en un entorno de sistemas operativos. El objetivo es simular un traductor de direcciones virtuales a físicas, manejando la tabla de páginas, fallos de página, y almacenamiento en memoria física. La memoria virtual se organiza en páginas y marcos, y el sistema incluye la carga de páginas desde un respaldo cuando ocurre un fallo de página.
+Esta tarea consiste en la implementación de un sistema para gestionar la memoria virtual en un entorno de sistemas operativos. El objetivo es simular un traductor de direcciones virtuales a físicas, manejando la tabla de páginas, fallos de página, y almacenamiento en memoria física. La memoria virtual se organiza en páginas y marcos, y el sistema incluye la carga de páginas desde un respaldo cuando ocurre un fallo de página.
 
-El proyecto se desarrolla siguiendo los conceptos explicados en el libro "Operating System Concepts" de Silberschatz, Galvin, y Gagne, que describe cómo funciona la memoria virtual, la gestión de la tabla de páginas y el reemplazo de páginas.
+Se desarrolla siguiendo los conceptos explicados en el libro "Operating System Concepts" de Silberschatz, Galvin, y Gagne, que describe cómo funciona la memoria virtual, la gestión de la tabla de páginas y el reemplazo de páginas.
 
 ## Compilación y Ejecución
 
@@ -37,19 +37,26 @@ Finalmente los resultados se presentan de esta forma en la terminal:
 ```txt
 #    | Dirección Lógica  | Dirección Física  | Valor     
 ------------------------------------------------------------
-1    | 1                 | 1                 | 0         
+1    | 1                 | 1                 | 1         
 2    | 256               | 256               | 1         
 3    | 32768             | 512               | -128      
-4    | 32769             | 513               | -128      
-5    | 128               | 128               | 0         
-6    | 65534             | 1022              | -1        
-7    | 33153             | 1153              | -127      
-8    | 12345             | 1337              | 48        
-9    | 54321             | 1585              | -44       
-10   | 9999              | 1807              | 39        
+4    | 32769             | 513               | -127      
+5    | 128               | 128               | -128      
+6    | 65534             | 1022              | -3        
+7    | 33153             | 1153              | 2         
+8    | 12345             | 1337              | 105       
+9    | 54321             | 1585              | 5         
+10   | 9999              | 1807              | 54        
 11   | 4096              | 2048              | 16        
 12   | 2048              | 2304              | 8         
-13   | 2048              | 2304              | 8         
+13   | 40960             | 2560              | -96       
+14   | 512               | 2816              | 2         
+15   | 45000             | 3272              | 119       
+16   | 7890              | 3538              | -16       
+17   | 6000              | 3696              | -121      
+18   | 20480             | 3840              | 80        
+19   | 1024              | 4096              | 4         
+20   | 50000             | 4432              | 19        
 
-Total de fallos de página: 10
+Total de fallos de página: 18
 ```

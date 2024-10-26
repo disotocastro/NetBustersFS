@@ -2,7 +2,6 @@
 #define ADDRESSTRANSLATOR_HPP
 
 #include "PageTable.hpp"
-#include "BackingStore.hpp"
 #include "PhysicalMemory.hpp"
 
 /**
@@ -14,10 +13,9 @@ public:
     /**
      * @brief Constructor que inicializa el traductor de direcciones con las clases necesarias.
      * @param pageTable Referencia a la tabla de páginas utilizada para la traducción.
-     * @param backingStore Referencia al respaldo para manejar fallos de página.
      * @param physicalMemory Referencia a la memoria física donde se almacenan las páginas.
      */
-    AddressTranslator(PageTable& pageTable, BackingStore& backingStore, PhysicalMemory& physicalMemory);
+    AddressTranslator(PageTable& pageTable, PhysicalMemory& physicalMemory);
 
     /**
      * @brief Traduce una dirección lógica a una dirección física.
@@ -43,11 +41,6 @@ private:
      * @brief Referencia a la tabla de páginas.
      */
     PageTable& pageTable;
-
-    /**
-     * @brief Referencia al respaldo donde se encuentran las páginas no cargadas.
-     */
-    BackingStore& backingStore;
 
     /**
      * @brief Referencia a la memoria física donde se almacenan las páginas cargadas.

@@ -1,16 +1,16 @@
 #include "PageTable.hpp"
 
-// Constructor: Inicializa la tabla de páginas con todas las entradas en -1 para indicar que no están cargadas.
+// Inicializa la tabla de páginas poniendo todas las entradas en -1
 PageTable::PageTable() {
     pageTable.resize(256, -1);
 }
 
-// Verifica si el número de página es válido (dentro del rango).
+// Verifica si el número de página es válido, o sea, si está dentro del rango.
 bool PageTable::isValidPage(size_t pageNumber) const {
     return pageNumber < pageTable.size();
 }
 
-// Obtiene el número de marco asociado a una página.
+// Obtiene el número de marco asociado a una página dada.
 int PageTable::getFrame(size_t pageNumber) const {
     if (!isValidPage(pageNumber)) {
         return -1; // Si la página no está cargada, devuelve -1.
@@ -23,9 +23,4 @@ void PageTable::updatePage(size_t pageNumber, int frameNumber) {
     if (isValidPage(pageNumber)) {
         pageTable[pageNumber] = frameNumber;
     }
-}
-
-// Verifica si una página está cargada en la memoria física.
-bool PageTable::isPageLoaded(size_t pageNumber) const {
-    return isValidPage(pageNumber) && pageTable[pageNumber] != -1;
 }

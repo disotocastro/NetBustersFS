@@ -1,15 +1,14 @@
 #include "AddressTranslator.hpp"
-#include <stdexcept>
 
-// Constructor: Inicializa las referencias necesarias para traducir direcciones.
-AddressTranslator::AddressTranslator(PageTable& pt, BackingStore& bs, PhysicalMemory& pm)
-    : pageTable(pt), backingStore(bs), physicalMemory(pm), pageFaultCount(0) {}
+// Se inicializa las referencias necesarias para traducir direcciones.
+AddressTranslator::AddressTranslator(PageTable& pt, PhysicalMemory& pm)
+    : pageTable(pt), physicalMemory(pm), pageFaultCount(0) {}
 
 // Traduce una dirección lógica a una dirección física.
 int AddressTranslator::translateAddress(int logicalAddress) {
-    // Obtener el número de página y el offset manualmente para darle un toque más personalizado.
+    // Obtener el número de página y el offset
     int pageNumber = logicalAddress / 256;
-    int offset = logicalAddress - (pageNumber * 256); // Evitando el uso del operador %.
+    int offset = logicalAddress - (pageNumber * 256);
 
     // Comprobar si la página está cargada.
     int frameNumber = pageTable.getFrame(pageNumber);
@@ -17,27 +16,22 @@ int AddressTranslator::translateAddress(int logicalAddress) {
     // Si la página no está cargada, manejar el fallo de página.
     if (frameNumber == -1) {
         handlePageFault(pageNumber);
-        frameNumber = pageTable.getFrame(pageNumber); // Volver a verificar tras cargar la página.
+        frameNumber = pageTable.getFrame(pageNumber);
     }
 
-    // Calcular la dirección física de forma manual para hacerlo más natural.
-    int physicalAddress = (frameNumber * 256) + offset;
-    return physicalAddress;
+    return (frameNumber * 256) + offset;
 }
 
-// Maneja un fallo de página, cargando la página desde el respaldo.
+// Maneja un fallo de página
 void AddressTranslator::handlePageFault(int pageNumber) {
     // Aumentar el contador de fallos de página.
     pageFaultCount++;
 
-    // Cargar la página desde el respaldo.
-    std::vector<char> pageData = backingStore.loadPage(pageNumber);
+    // Se cargar la página desde el respaldo en PhysicalMemory.
+    std::vector<char> pageData = physicalMemory.loadPage(pageNumber);
 
-    // Buscar un marco libre en la memoria física.
+    // Buscar un marco libre en la memoria física
     int freeFrame = physicalMemory.getFreeFrame();
-    if (freeFrame == -1) {
-        throw std::runtime_error("No hay marcos disponibles para manejar el fallo de página.");
-    }
 
     // Guardar la página en la memoria física y actualizar la tabla de páginas.
     physicalMemory.storePage(freeFrame, pageData);

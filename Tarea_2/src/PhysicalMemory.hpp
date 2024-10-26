@@ -6,14 +6,11 @@
 
 /**
  * @class PhysicalMemory
- * @brief Gestiona los marcos de la memoria física.
+ * @brief Gestiona los marcos de la memoria física y actúa como respaldo para páginas no cargadas.
  */
 class PhysicalMemory {
 public:
-    /**
-     * @brief Constructor que inicializa la memoria física con el número de marcos especificado.
-     * @param numberOfFrames El número de marcos de memoria física a inicializar.
-     */
+
     PhysicalMemory(size_t numberOfFrames);
 
     /**
@@ -37,6 +34,13 @@ public:
      */
     char readByte(int frameNumber, int offset) const;
 
+    /**
+     * @brief Carga una página desde el respaldo.
+     * @param pageNumber El número de la página que se va a cargar.
+     * @return Los datos de la página solicitada.
+     */
+    std::vector<char> loadPage(size_t pageNumber) const;
+
 private:
     /**
      * @brief Vector que almacena los datos de cada marco.
@@ -47,6 +51,11 @@ private:
      * @brief Vector de booleanos que indica si un marco está disponible.
      */
     std::vector<bool> frameAvailability;
+
+    /**
+     * @brief Arreglo en memoria que actúa como el respaldo.
+     */
+    std::vector<std::vector<char>> storage;
 };
 
 #endif // PHYSICALMEMORY_HPP

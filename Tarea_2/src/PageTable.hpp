@@ -29,13 +29,6 @@ public:
      */
     void updatePage(size_t pageNumber, int frameNumber);
 
-    /**
-     * @brief Verifica si una página está cargada en la memoria física.
-     * @param pageNumber El número de la página a verificar.
-     * @return true si la página está cargada, false en caso contrario.
-     */
-    bool isPageLoaded(size_t pageNumber) const;
-
 private:
     /**
      * @brief Verifica si el número de página es válido.
