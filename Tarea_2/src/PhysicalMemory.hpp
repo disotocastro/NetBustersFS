@@ -27,14 +27,6 @@ public:
     void storePage(int frameNumber, const std::vector<char>& pageData);
 
     /**
-     * @brief Lee un byte específico desde un marco y desplazamiento de la memoria física.
-     * @param frameNumber El número del marco del cual se va a leer el byte.
-     * @param offset El desplazamiento dentro del marco.
-     * @return El byte leído de la memoria física.
-     */
-    char readByte(int frameNumber, int offset) const;
-
-    /**
      * @brief Carga una página desde el respaldo.
      * @param pageNumber El número de la página que se va a cargar.
      * @return Los datos de la página solicitada.

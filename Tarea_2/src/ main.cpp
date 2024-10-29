@@ -26,7 +26,6 @@ int main() {
               << std::setw(5) << "#" 
               << "| " << std::setw(18) << "Dirección Lógica "
               << " | " << std::setw(18) << "Dirección Física "
-              << " | " << std::setw(10) << "Valor "
               << std::endl;
     std::cout << std::string(60, '-') << std::endl;
 
@@ -36,14 +35,12 @@ int main() {
     while (inputFile >> logicalAddress) {
         try {
             int physicalAddress = translator.translateAddress(logicalAddress);
-            char value = physicalMemory.readByte(physicalAddress / 256, physicalAddress % 256);
-
-            // Imprimir los resultados usando numeración y separadores verticales
+            
+            // Imprimir la información de dirección lógica y física
             std::cout << std::left
                       << std::setw(5) << count
                       << "| " << std::setw(18) << logicalAddress
                       << "| " << std::setw(18) << physicalAddress
-                      << "| " << std::setw(10) << static_cast<int>(value)
                       << std::endl;
 
             count++;

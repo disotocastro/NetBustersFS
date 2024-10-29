@@ -1,18 +1,18 @@
 #include "PhysicalMemory.hpp"
 #include <stdexcept> // Para manejar excepciones
 
-// Se inciializa la memoria física con el número de marcos especificado.
+// Se inicializa la memoria física con el número de marcos especificado.
 PhysicalMemory::PhysicalMemory(size_t numberOfFrames) {
     // Se ajusta el tamaño de los vectores para los marcos y la disponibilidad.
     frames.resize(numberOfFrames, std::vector<char>(256, 0));
     frameAvailability.resize(numberOfFrames, true);
     
-    // se inicializa el respaldo con datos simulados para las páginas.
+    // Se inicializa el respaldo con datos simulados para las páginas.
     storage.resize(256);
     for (size_t i = 0; i < 256; ++i) {
         std::vector<char> page(256);
         for (size_t j = 0; j < 256; ++j) {
-            // Se llena  cada página con valores basados en el índice y el byte.
+            // Se llena cada página con valores basados en el índice y el byte.
             page[j] = static_cast<char>((i + j) % 256);
         }
         storage[i] = page;
@@ -39,15 +39,6 @@ void PhysicalMemory::storePage(int frameNumber, const std::vector<char>& pageDat
     }
     frames[frameNumber] = pageData;
     frameAvailability[frameNumber] = false; // Se marca el marco como ocupado.
-}
-
-// Leer un byte específico desde un marco y desplazamiento que se le da.
-char PhysicalMemory::readByte(int frameNumber, int offset) const {
-    if (frameNumber < 0 || frameNumber >= static_cast<int>(frames.size()) ||
-        offset < 0 || offset >= 256) {
-        throw std::out_of_range("La dirección está fuera del rango permitido.");
-    }
-    return frames[frameNumber][offset];
 }
 
 // Cargar una página desde el respaldo.

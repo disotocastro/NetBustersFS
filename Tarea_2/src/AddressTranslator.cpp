@@ -19,7 +19,7 @@ int AddressTranslator::translateAddress(int logicalAddress) {
         frameNumber = pageTable.getFrame(pageNumber);
     }
 
-    return (frameNumber * 256) + offset;
+    return (frameNumber * 256) + offset;  // Retornar la dirección física calculada.
 }
 
 // Maneja un fallo de página
